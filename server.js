@@ -9,7 +9,7 @@ var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use('/', router);
-app.set('port', 5566);
+app.set('port', 55566);
 app.listen(app.get('port'), function () {
     console.log('app start server at ' + app.get('port'));
 });

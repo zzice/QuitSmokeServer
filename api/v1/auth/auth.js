@@ -2,14 +2,30 @@ var User = require('../../../model/user');
 var BaseModel = require('../../../model/base_model');
 var jwt = require('jsonwebtoken');
 var crypto = require('crypto');
+function isEmptyObject(e){
+    var t;
+    for ( t in e ) {
+        return !1;
+    };
+    return !0;
+}
 
 /*get请求取参*/
 /*注册*/
 module.exports.register = function (req, res) {
-    var userPhone = req.query.userPhone;
-    var password = req.query.password;
+    var userPhone = undefined;
+    var password = undefined;
+    if ( req.query === undefined || isEmptyObject(req.query) ) {
+        req.query = req.body;
+    }
+    userPhone = req.query.userPhone;
+    password = req.query.password;
     if (!userPhone || !password) {
         BaseModel(false, res, '请检查注册信息');
+        return;
+    }
+    if (userPhone.length != 11) {
+        BaseModel(false, res, '手机号长度不正确');
         return;
     }
     User.findOne({userPhone: userPhone}, function (err, user) {
@@ -29,7 +45,21 @@ module.exports.register = function (req, res) {
                     console.log(error);
                     BaseModel(false, res, '服务器维护，请稍后注册');
                 } else {
-                    BaseModel(true, res, '注册成功');
+                    // BaseModel(true, res, '注册成功');
+                    var sign = jwt.sign({
+                        _id: saveData._id,
+                        userPhone: saveData.userPhone
+                    }, 'zhaobing', {expiresIn: 60 * 60 * 24});
+                    jwt.verify(sign, 'zhaobing', function (err, decoded) {
+                        console.log('a:' + decoded.userPhone);
+                    });
+                    res.json({
+                        success: true,
+                        error: false,
+                        result: saveData,
+                        token: sign
+                    });
+                    console.log('注册成功,Token:' + sign);
                 }
             });
         }
@@ -37,8 +67,13 @@ module.exports.register = function (req, res) {
 };
 /*登录*/
 module.exports.login = function (req, res) {
-    var userPhone = req.query.userPhone;
-    var password = req.query.password;
+    var userPhone = undefined;
+    var password = undefined;
+    if ( req.query === undefined || isEmptyObject(req.query) ) {
+        req.query = req.body;
+    }
+    userPhone = req.query.userPhone;
+    password = req.query.password;
     if (!userPhone || !password) {
         BaseModel(false, res, '请检查登录信息');
         return;
@@ -61,7 +96,7 @@ module.exports.login = function (req, res) {
             res.json({
                 success: true,
                 error: false,
-                result: '登录成功',
+                result: user,
                 token: sign
             });
             console.log('登录成功,Token:' + sign);
