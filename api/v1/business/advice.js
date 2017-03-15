@@ -2,7 +2,7 @@
 var BaseModel = require('../../../model/base_model');
 var User = require('../../../model/user');
 var jwt = require('jsonwebtoken');
-
+/*获得控烟目标*/
 module.exports.getAdviceMsg = function (req, res) {
     if (req.query === undefined) {
         req.query = req.body;
@@ -21,7 +21,7 @@ module.exports.getAdviceMsg = function (req, res) {
         BaseModel(true, res, '您是重度烟民,戒烟推荐10支/日!');
     }
 };
-
+/*签到*/
 module.exports.signIn = function (req, res) {
     if (req.query === undefined) {
         req.query = req.body;

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("button").click(function(){
+                $.post("http://192.168.1.114:55566/api/v1/register/", {
+                        userPhone:"18661981435",
+                        password:"123456"
+                    },
+                    function(data){
+                    console.log(JSON.stringify(data));
+                        alert("数据：" + JSON.stringify(data));
+                    },'json');
+            });
+        });
+    </script>
+</head>
+<body>
+<button>向页面发送 HTTP POST 请求，并获得返回的结果</button>
+</body>
+</html>

@@ -10,19 +10,19 @@ router.get('/', function (req, res) {
     res.end('Welcome!');
 });
 /*get 注册*/
-router.get('/api/v1/register', auth.register);
+//router.get('/api/v1/register', auth.register);
 /*get 登录*/
-router.get('/api/v1/login', auth.login);
+//router.get('/api/v1/login', auth.login);
 /*post 注册*/
 router.post('/api/v1/register', auth.register);
 /*post 登录*/
 router.post('/api/v1/login', auth.login);
 /*get 检查更新版本*/
 router.get('/api/v1/check/version/:versionCode', version.checkVersion);
-/*get 上传版本信息*/
-router.get('/api/v1/upload/version/',version.uploadVersionInfo);
+/*post 上传版本信息*/
+router.post('/api/v1/upload/version/',version.uploadVersionInfo);
 /*get 获取吸烟戒烟*/
 router.get('/api/v1/get/advince/',advice.getAdviceMsg);
-/*get 签到*/
-router.get('/api/v1/user/sign/',advice.signIn);
+/*post 签到*/
+router.post('/api/v1/user/sign/',advice.signIn);
 module.exports = router;

@@ -10,7 +10,6 @@ function isEmptyObject(e){
     return !0;
 }
 
-/*get请求取参*/
 /*注册*/
 module.exports.register = function (req, res) {
     var userPhone = undefined;
@@ -45,13 +44,13 @@ module.exports.register = function (req, res) {
                     console.log(error);
                     BaseModel(false, res, '服务器维护，请稍后注册');
                 } else {
-                    // BaseModel(true, res, '注册成功');
                     var sign = jwt.sign({
                         _id: saveData._id,
                         userPhone: saveData.userPhone
                     }, 'zhaobing', {expiresIn: 60 * 60 * 24});
                     jwt.verify(sign, 'zhaobing', function (err, decoded) {
                         console.log('a:' + decoded.userPhone);
+                        console.log(decoded.exp);
                     });
                     res.json({
                         success: true,

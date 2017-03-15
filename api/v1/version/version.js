@@ -4,9 +4,9 @@ var Version = require('../../../model/version');
 
 /*移除旧版本信息并上传新版本*/
 module.exports.uploadVersionInfo = function (req, res) {
-    var newestVersionCode = req.query.newestVersionCode;
-    var newestVersionName = req.query.newestVersionName;
-    var newestUrl = req.query.newestUrl;
+    var newestVersionCode = req.body.newestVersionCode;
+    var newestVersionName = req.body.newestVersionName;
+    var newestUrl = req.body.newestUrl;
     if (!newestVersionCode || !newestUrl) {
         BaseModel(false, res, '请检查参数是否输入正确');
         return;

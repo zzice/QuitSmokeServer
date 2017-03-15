@@ -8,6 +8,10 @@ var express = require('express'),
 var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+app.all('*',function (req,res,next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    next();
+});
 app.use('/', router);
 app.set('port', 55566);
 app.listen(app.get('port'), function () {
