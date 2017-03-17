@@ -6,15 +6,26 @@
     <script>
         $(document).ready(function(){
             $("button").click(function(){
-                $.post("http://192.168.1.114:55566/api/v1/register/", {
-                        userPhone:"18661981435",
-                        password:"123456"
+                $.post("http://192.168.1.114:55566/api/v1/smoke/ctrl/", {
+                        key:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1OGNiODM3MmQ0ZDc3NDdlNmNhYTBiNGIiLCJ1c2VyUGhvbmUiOiIxODY2MTk2NTI0MCIsImlhdCI6MTQ4OTczMjQ2NiwiZXhwIjoxNDg5ODE4ODY2fQ.XV-H9fb9_f9NzdRkVBhATfIKMcHqQvui8ANbJaLWN_w",
+                        type:0,
+                        num:'11',
                     },
                     function(data){
                     console.log(JSON.stringify(data));
                         alert("数据：" + JSON.stringify(data));
                     },'json');
             });
+//            $("button").click(function(){
+//                $.post("http://192.168.1.114:55566/api/v1/register", {
+//                       userPhone:18661965240,
+//                       password:123456
+//                    },
+//                    function(data){
+//                        console.log(JSON.stringify(data));
+//                        alert("数据：" + JSON.stringify(data));
+//                    },'json');
+//            });
         });
     </script>
 </head>
