@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#getInfo").click(function () {
+                $.get("http://localhost:55566/api/v1/get/advince/",
+                    {
+                        dayNum: 10,
+                        yearNum: 5
+                    },
+                    function (data) {
+                        console.log(JSON.stringify(data));
+                        alert("数据：" + JSON.stringify(data));
+                    }, 'json');
+            });
+            $("#createQsPlan").click(function () {
+                $.post("http://localhost:55566/api/v1/start/1/", {
+                        key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1OGNmZWYyOWYwY2UxNDYxZWRkNTE1Y2IiLCJ1c2VyUGhvbmUiOiIxODY2MTk2NTI0NyIsImlhdCI6MTQ5MDAyMjY4MywiZXhwIjoxNDkwMTA5MDgzfQ.SZohuror0Wwc36XW7GFThd9b0GrNcZ17FQf-0P2rciI",
+                        dayNum: 10,
+                        price: 11,
+                        tar: 50,
+
+                    },
+                    function (data) {
+                        console.log(JSON.stringify(data));
+                        alert("数据：" + JSON.stringify(data));
+                    }, 'json');
+            });
+        });
+    </script>
+</head>
+<body>
+<button id="getInfo">获取戒烟建议</button>
+<button id="createQsPlan">生成戒烟计划</button>
+</body>
+</html>

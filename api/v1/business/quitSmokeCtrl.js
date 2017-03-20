@@ -4,15 +4,12 @@ var User = require('../../../model/user');
 var jwt = require('jsonwebtoken');
 /*签到*/
 module.exports.signIn = function (req, res) {
-    if (req.query === undefined) {
-        req.query = req.body;
-    }
-    var id = req.query.userId;
-    var key = req.query.key;
-    if (!id || !key) {
+    var key = req.body.key;
+    if (!key) {
         BaseModel.notParamRes(res);
+        return;
     }
-    function updateUserSignData(user) {
+    function updateUserSignData(user,_id) {
         var experience = user.experience + 10;
         var position = undefined;
         for (var pos in global.exps) {
@@ -20,7 +17,7 @@ module.exports.signIn = function (req, res) {
                 position = pos;
             }
         }
-        User.update({_id: id}, {
+        User.update({_id: _id}, {
             sign_time: Date.now(),
             experience: experience,
             level: global.levels[position],
@@ -38,31 +35,27 @@ module.exports.signIn = function (req, res) {
         if (!err) {
             var _id = decoded._id;
             if (_id) {
-                if (id != _id) {
-                    BaseModel(false, res, 'key值过期,请重新登录');
-                } else {
                     //签到
-                    User.findById(id, function (err, user) {
+                    User.findById(_id, function (err, user) {
                         if (err || !user) {
                             BaseModel(false, res, 4);
                         } else {
                             var signTime = user.sign_time;
                             if (!signTime) {
-                                updateUserSignData(user);
+                                updateUserSignData(user,_id);
                             } else {
                                 var difDate = new Date().getTime() - signTime.getTime();
                                 //计算出相差天数
                                 var days = Math.floor(difDate / (24 * 3600 * 1000));
                                 console.log(days);
                                 if (days > 1) {
-                                    updateUserSignData(user);
+                                    updateUserSignData(user,_id);
                                 } else {
                                     BaseModel(false, res, '不能重复签到');
                                 }
                             }
                         }
                     });
-                }
             } else {
                 BaseModel(false, res, '账号过期,请重新登录');
             }

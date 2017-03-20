@@ -25,10 +25,10 @@ router.get('/api/v1/get/advince/', advice.getAdviceMsg);
 router.post('/api/v1/user/sign/', smokeCtrl.signIn);
 /*post 开始戒烟计划 1 戒烟计划*/
 router.post('/api/v1/start/1/', smokeCtrl.quitSmoke);
-/*0 控烟计划*/
-//router.post('/api/v1/start/2/', smokeCtrl.quitSmoke);
 /*post 抽烟或压制 经验变化*/
 router.post('/api/v1/smoke/ctrl/', smokeCtrl.smokeBehavior);
-router.post('/api/v1/smoke/ctrl/c/', sCtrl.createSmoke);
+/*post 生成控烟计划*/
+router.post('/api/v1/start/2/', sCtrl.createSmoke);
+/*post 控烟动作计算*/
 router.post('/api/v1/smoke/ctrl/c1/', sCtrl.countSmoke);
 module.exports = router;
