@@ -5,6 +5,7 @@ global.titles = ['筑基', '开光', '融合', '心动', '金丹', '元婴', '�
 global.levels = ['1级', '2级', '3级', '4级', '5级', '6级', '7级', '8级', '9级', '10级', '11级', '12级'];
 global.exps = [0, 300, 650, 1300, 1800, 2800, 4300, 6300, 8000, 9800, 11500, 13500];
 var UserSchema = new Schema({
+    planId:{type:Schema.Types.ObjectId,ref:'plan'},
     userPhone: {type: String, required: true},
     password: {type: String, required: true},
     //头像
@@ -25,6 +26,10 @@ var UserSchema = new Schema({
     smoke_info: {type: Object},
     //戒烟开始时间
     qs_start_date:{type:Date},
+    //控烟开始时间
+    sc_start_date:{type:Date},
+    //控烟结束时间
+    sc_stop_date:{type:Date},
     //戒烟停止/失败时间
     qs_fail_date:{type:Date}
 }, {versionKey: false});

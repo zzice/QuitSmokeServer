@@ -1,78 +1,10 @@
-/*戒烟业务服务逻辑*/
 var BaseModel = require('../../../model/base_model');
 var User = require('../../../model/user');
+var Plan = require('../../../model/plan');
 var jwt = require('jsonwebtoken');
-/*签到*/
-module.exports.signIn = function (req, res) {
-    if (req.query === undefined) {
-        req.query = req.body;
-    }
-    var id = req.query.userId;
-    var key = req.query.key;
-    if (!id || !key) {
-        BaseModel.notParamRes(res);
-    }
-    function updateUserSignData(user) {
-        var experience = user.experience + 10;
-        var position = undefined;
-        for (var pos in global.exps) {
-            if (experience > global.exps[pos]) {
-                position = pos;
-            }
-        }
-        User.update({_id: id}, {
-            sign_time: Date.now(),
-            experience: experience,
-            level: global.levels[position],
-            title: global.titles[position]
-        }, function (err) {
-            if (!err) {
-                BaseModel(true, res, '签到成功');
-            } else {
-                BaseModel(false, res, '签到失败');
-            }
-        });
-    }
 
-    jwt.verify(key, 'zhaobing', function (err, decoded) {
-        if (!err) {
-            var _id = decoded._id;
-            if (_id) {
-                if (id != _id) {
-                    BaseModel(false, res, 'key值过期,请重新登录');
-                } else {
-                    //签到
-                    User.findById(id, function (err, user) {
-                        if (err || !user) {
-                            BaseModel(false, res, 4);
-                        } else {
-                            var signTime = user.sign_time;
-                            if (!signTime) {
-                                updateUserSignData(user);
-                            } else {
-                                var difDate = new Date().getTime() - signTime.getTime();
-                                //计算出相差天数
-                                var days = Math.floor(difDate / (24 * 3600 * 1000));
-                                console.log(days);
-                                if (days > 1) {
-                                    updateUserSignData(user);
-                                } else {
-                                    BaseModel(false, res, '不能重复签到');
-                                }
-                            }
-                        }
-                    });
-                }
-            } else {
-                BaseModel(false, res, '账号过期,请重新登录');
-            }
-        } else {
-            BaseModel(false, res, err);
-        }
-    });
-};
 /*生成戒烟计划*/
-module.exports.quitSmoke = function (req, res) {
+module.exports.createSmoke = function (req, res) {
     if (!req.body) {
         BaseModel(false, res, '检查参数是否提交');
         return;
@@ -81,7 +13,8 @@ module.exports.quitSmoke = function (req, res) {
     var dayNum = req.body.dayNum;
     var price = req.body.price;
     var tar = req.body.tar;
-    if (!key || !dayNum || !price || !tar) {
+    var adviceNum = req.body.adviceNum;
+    if (!key || !dayNum || !price || !tar || !adviceNum) {
         BaseModel.notParamRes(res);
         return;
     }
@@ -97,13 +30,34 @@ module.exports.quitSmoke = function (req, res) {
                         SmokeInfo.dayNum = dayNum;
                         SmokeInfo.price = price;
                         SmokeInfo.tar = tar;
-                        var qs_start_date = new Date();
                         User.update({_id: _id}, {
                             smoke_info: SmokeInfo,
-                            qs_start_date: Date.now()
+                            sc_start_date: Date.now(),
+                            planId: _id
                         }, function (err) {
                             if (!err) {
-                                BaseModel(true, res, qs_start_date);
+                                var plan = new Array(30);
+                                for (var i = 0; i < 30; i++) {
+                                    var dayInfo = {};
+                                    dayInfo.realNum = 0;
+                                    dayInfo.isSucess = true;
+                                    dayInfo.planDate = new Date((new Date().getTime()+(i*86400000)));
+                                    plan[i] = dayInfo;
+                                }
+                                //创建30日计划
+                                Plan.create({id: _id, dayGoal: adviceNum, plan: plan}, function (err, plan) {
+                                    if (!err) {
+                                        BaseModel(true, res, plan);
+                                    } else {
+                                        BaseModel(false, res, err);
+                                    }
+                                });
+                                // Plan.find().populate('id').exec(function (err, data) {
+                                //     BaseModel(true, res, data);
+                                // });
+                                // Plan.findOne({id: _id}, function (err, data) {
+                                //     BaseModel(true, res, data);
+                                // });
                             } else {
                                 BaseModel(false, res, '失败:' + err);
                             }
@@ -114,18 +68,91 @@ module.exports.quitSmoke = function (req, res) {
                 BaseModel(false, res, '账号过期,请重新登录');
             }
         } else {
-            BaseModel(false, res, err);
+            BaseModel(false, res, '账号过期,请重新登录,' + err);
         }
     });
 };
-/*抽烟或压制 经验变化 复吸or更改计划*/
-module.exports.smokeBehavior = function (req, res) {
+
+/*控烟动作计算*/
+module.exports.countSmoke = function (req, res) {
     var key = req.body.key;
     var type = req.body.type;
     var num = req.body.num;
+    var cNum = req.body.cNum;
     if (!key || !type) {
         BaseModel.notParamRes(res);
         return;
+    }
+    /**
+     * 查询Plan表，并更新表数据
+     * @param id Plan关联id
+     * @param cNum 每日抽烟数量
+     */
+    function findPlanAndModify(id, cNum) {
+        Plan.findOne({id: id}, function (err, data) {
+            if (!err && data) {
+                var _id = data._id;
+                var dayGoal = data.dayGoal;
+                var plan = data.plan;
+                if (cNum > dayGoal) {
+                    for (var i = 0; i < plan.length; i++) {
+                        if (plan[i].planDate.toDateString() === new Date().toDateString()) {
+                            var dayInfo = {};
+                            dayInfo.planDate = plan[i].planDate;
+                            dayInfo.isSucess = false;
+                            dayInfo.realNum = cNum;
+                            plan[i] = dayInfo;
+                            Plan.update({_id: _id}, {
+                                plan: plan
+                            }, function (err) {
+                                if (!err) {
+                                    BaseModel(true, res, 'Good');
+                                } else {
+                                    BaseModel(false, res, err);
+                                }
+                            })
+                        }
+                    }
+                }
+            } else {
+                BaseModel(false, res, err);
+            }
+        });
+    }
+    /**
+     * 抽烟操作，查询User,更新Exp经验。
+     * @param id
+     * @param cNum
+     * @param res
+     */
+    function findUserAndUpdateSubtractExp(id, cNum, res) {
+        User.findById(id, function (err, user) {
+            if (!err || user) {
+                if (user.experience > 10) {
+                    var experience = user.experience - 10;
+                    for (var pos in global.exps) {
+                        if (experience > global.exps[pos]) {
+                            position = pos;
+                        }
+                    }
+                    User.update({_id: id}, {
+                        experience: experience,
+                        level: global.levels[position],
+                        title: global.titles[position]
+                    }, function (err) {
+                        if (!err) {
+                            findPlanAndModify(id, cNum);
+                        } else {
+                            BaseModel(false, res, '操作失败');
+                        }
+                    });
+                } else {
+                    BaseModel(true, res, "操作成功 ");
+                }
+            } else {
+                BaseModel(false, res, '服务器错误，稍后重试');
+            }
+        });
     }
     jwt.verify(key, 'zhaobing', function (err, decoded) {
         if (!err) {
@@ -133,38 +160,12 @@ module.exports.smokeBehavior = function (req, res) {
             if (id) {
                 //抽烟
                 if (type === '0') {
-                    User.findById(id, function (err, user) {
-                        if (!err || user) {
-                            if (user.experience > 10) {
-                                var experience = user.experience - 10;
-                                for (var pos in global.exps) {
-                                    if (experience > global.exps[pos]) {
-                                        position = pos;
-                                    }
-                                }
-                                var resObject = {
-                                    experience: experience,
-                                    level: global.levels[position],
-                                    title: global.titles[position]
-                                };
-                                User.update({_id: id}, {
-                                    experience: experience,
-                                    level: global.levels[position],
-                                    title: global.titles[position]
-                                }, function (err) {
-                                    if (!err) {
-                                        BaseModel(true, res, resObject);
-                                    } else {
-                                        BaseModel(false, res, '操作失败');
-                                    }
-                                });
-                            } else {
-                                BaseModel(true, res, "操作成功 ");
-                            }
-                        } else {
-                            BaseModel(false, res, '服务器错误，稍后重试');
-                        }
-                    });
+                    cNum = parseInt(cNum);
+                    if (isNaN(cNum)) {
+                        BaseModel(false, res, '操作失败,请检查参数是否正确');
+                        return;
+                    }
+                    findUserAndUpdateSubtractExp(id, cNum, res);
                 } else if (type === '1') {
                     if (!num) {
                         BaseModel.notParamRes(res);

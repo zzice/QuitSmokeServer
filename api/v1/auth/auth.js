@@ -2,9 +2,9 @@ var User = require('../../../model/user');
 var BaseModel = require('../../../model/base_model');
 var jwt = require('jsonwebtoken');
 var crypto = require('crypto');
-function isEmptyObject(e){
+function isEmptyObject(e) {
     var t;
-    for ( t in e ) {
+    for (t in e) {
         return !1;
     }
     return !0;
@@ -14,7 +14,7 @@ function isEmptyObject(e){
 module.exports.register = function (req, res) {
     var userPhone = undefined;
     var password = undefined;
-    if ( req.query === undefined || isEmptyObject(req.query) ) {
+    if (req.query === undefined || isEmptyObject(req.query)) {
         req.query = req.body;
     }
     userPhone = req.query.userPhone;
@@ -68,7 +68,7 @@ module.exports.register = function (req, res) {
 module.exports.login = function (req, res) {
     var userPhone = undefined;
     var password = undefined;
-    if ( req.query === undefined || isEmptyObject(req.query) ) {
+    if (req.query === undefined || isEmptyObject(req.query)) {
         req.query = req.body;
     }
     userPhone = req.query.userPhone;
@@ -78,27 +78,31 @@ module.exports.login = function (req, res) {
         return;
     }
     var hashMd5 = crypto.createHash('sha1');
-    User.findOne({userPhone: userPhone, password: hashMd5.update(password).digest('hex')}, function (err, user) {
+    User.findOne({userPhone: userPhone}, function (err, user) {
         if (err) {
             BaseModel(false, res, '数据库错误，登录失败');
         }
         if (!user) {
-            BaseModel(false, res, '尚未注册');
+            BaseModel(false, res, '没有用户信息');
         } else {
-            var sign = jwt.sign({
-                _id: user._id,
-                userPhone: user.userPhone
-            }, 'zhaobing', {expiresIn: 60 * 60 * 24});
-            jwt.verify(sign, 'zhaobing', function (err, decoded) {
-                console.log('a:' + decoded.userPhone);
-            });
-            res.json({
-                success: true,
-                error: false,
-                result: user,
-                token: sign
-            });
-            console.log('登录成功,Token:' + sign);
+            if ((hashMd5.update(password).digest('hex')) != user.password) {
+                BaseModel(false, res, '密码不正确');
+            } else {
+                var sign = jwt.sign({
+                    _id: user._id,
+                    userPhone: user.userPhone
+                }, 'zhaobing', {expiresIn: 60 * 60 * 24});
+                jwt.verify(sign, 'zhaobing', function (err, decoded) {
+                    console.log('a:' + decoded.userPhone);
+                });
+                res.json({
+                    success: true,
+                    error: false,
+                    result: user,
+                    token: sign
+                });
+                console.log('登录成功,Token:' + sign);
+            }
         }
     })
 };

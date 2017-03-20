@@ -3,7 +3,6 @@ var express = require('express'),
     baseModel = require('./model/base_model'),
     bodyParser = require('body-parser'),
     router = require('./router/router'),
-    jwt = require('jsonwebtoken'),
     db = require('./db');
 var app = express();
 app.use(bodyParser.json());

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#checkVersion").click(function(){
+                $.get("http://192.168.1.114:55566/api/v1/check/version/"+1,
+                    function(data){
+                        console.log(JSON.stringify(data));
+                        alert("数据：" + JSON.stringify(data));
+                    },'json');
+            });
+            $("#uploadVersion").click(function(){
+                $.post("http://192.168.1.114:55566/api/v1/upload/version/", {
+                        newestVersionCode:3,
+                        newestVersionName:'Good',
+
+                    },
+                    function(data){
+                        console.log(JSON.stringify(data));
+                        alert("数据：" + JSON.stringify(data));
+                    },'json');
+            });
+        });
+    </script>
+</head>
+<body>
+<button id="checkVersion">新版本检测</button>
+<button id="uploadVersion">上传新版本信息</button>
+</body>
+</html>

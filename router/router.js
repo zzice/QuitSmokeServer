@@ -5,15 +5,12 @@ var auth = require(v1Path + '/auth/auth');
 var version = require(v1Path + '/version/version');
 var advice = require(v1Path + '/business/advice');
 var smokeCtrl = require(v1Path + '/business/quitSmokeCtrl');
+var sCtrl = require(v1Path + '/business/smokeCtrl');
 
 /*根路径*/
 router.get('/', function (req, res) {
     res.end('Welcome!');
 });
-/*get 注册*/
-//router.get('/api/v1/register', auth.register);
-/*get 登录*/
-//router.get('/api/v1/login', auth.login);
 /*post 注册*/
 router.post('/api/v1/register', auth.register);
 /*post 登录*/
@@ -32,4 +29,6 @@ router.post('/api/v1/start/1/', smokeCtrl.quitSmoke);
 //router.post('/api/v1/start/2/', smokeCtrl.quitSmoke);
 /*post 抽烟或压制 经验变化*/
 router.post('/api/v1/smoke/ctrl/', smokeCtrl.smokeBehavior);
+router.post('/api/v1/smoke/ctrl/c/', sCtrl.createSmoke);
+router.post('/api/v1/smoke/ctrl/c1/', sCtrl.countSmoke);
 module.exports = router;
