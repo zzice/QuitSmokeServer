@@ -31,4 +31,5 @@ router.post('/api/v1/smoke/ctrl/', smokeCtrl.smokeBehavior);
 router.post('/api/v1/start/2/', sCtrl.createSmoke);
 /*post 控烟动作计算*/
 router.post('/api/v1/smoke/ctrl/c1/', sCtrl.countSmoke);
+
 module.exports = router;

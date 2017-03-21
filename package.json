@@ -4,7 +4,7 @@
   "description": "quit-smoke",
   "main": "server.js",
   "scripts": {
-    "test": "node start server.js"
+    "start":"node server.js"
   },
   "author": "zice",
   "license": "ISC",

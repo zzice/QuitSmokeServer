@@ -94,26 +94,28 @@ module.exports.countSmoke = function (req, res) {
                 var _id = data._id;
                 var dayGoal = data.dayGoal;
                 var plan = data.plan;
-                if (cNum > dayGoal) {
                     for (var i = 0; i < plan.length; i++) {
                         if (plan[i].planDate.toDateString() === new Date().toDateString()) {
                             var dayInfo = {};
                             dayInfo.planDate = plan[i].planDate;
-                            dayInfo.isSucess = false;
+                            if (cNum > dayGoal) {
+                                dayInfo.isSucess = false;
+                            }else {
+                                dayInfo.isSucess = true;
+                            }
                             dayInfo.realNum = cNum;
                             plan[i] = dayInfo;
                             Plan.update({_id: _id}, {
                                 plan: plan
                             }, function (err) {
                                 if (!err) {
-                                    BaseModel(true, res, 'Good');
+                                    BaseModel(true, res, plan);
                                 } else {
                                     BaseModel(false, res, err);
                                 }
                             })
                         }
                     }
-                }
             } else {
                 BaseModel(false, res, err);
             }
@@ -147,7 +149,7 @@ module.exports.countSmoke = function (req, res) {
                         }
                     });
                 } else {
-                    BaseModel(true, res, "操作成功 ");
+                    BaseModel(true, res, "操作成功");
                 }
             } else {
                 BaseModel(false, res, '服务器错误，稍后重试');

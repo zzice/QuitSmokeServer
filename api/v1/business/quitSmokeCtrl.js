@@ -127,7 +127,7 @@ module.exports.smokeBehavior = function (req, res) {
                 //抽烟
                 if (type === '0') {
                     User.findById(id, function (err, user) {
-                        if (!err || user) {
+                        if (!err && user) {
                             if (user.experience > 10) {
                                 var experience = user.experience - 10;
                                 for (var pos in global.exps) {
@@ -152,7 +152,7 @@ module.exports.smokeBehavior = function (req, res) {
                                     }
                                 });
                             } else {
-                                BaseModel(true, res, "操作成功 ");
+                                BaseModel(true, res, "操作成功");
                             }
                         } else {
                             BaseModel(false, res, '服务器错误，稍后重试');

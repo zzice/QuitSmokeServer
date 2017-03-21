@@ -5,6 +5,7 @@
     <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js"></script>
     <script>
         $(document).ready(function () {
+            //获取戒烟建议
             $("#getInfo").click(function () {
                 $.get("http://localhost:55566/api/v1/get/advince/",
                     {
@@ -16,6 +17,7 @@
                         alert("数据：" + JSON.stringify(data));
                     }, 'json');
             });
+            //生成戒烟计划
             $("#createQsPlan").click(function () {
                 $.post("http://localhost:55566/api/v1/start/1/", {
                         key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1OGNmZWYyOWYwY2UxNDYxZWRkNTE1Y2IiLCJ1c2VyUGhvbmUiOiIxODY2MTk2NTI0NyIsImlhdCI6MTQ5MDAyMjY4MywiZXhwIjoxNDkwMTA5MDgzfQ.SZohuror0Wwc36XW7GFThd9b0GrNcZ17FQf-0P2rciI",
@@ -29,11 +31,103 @@
                         alert("数据：" + JSON.stringify(data));
                     }, 'json');
             });
+            //戒烟模式抽烟
+            $("#planSmoke").click(function () {
+                $.post("http://localhost:55566/api/v1/smoke/ctrl/", {
+                        key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1OGNmYTcwODNmOTYxYjJmMGM2MGM1ZDIiLCJ1c2VyUGhvbmUiOiIxODY2MTk2NTI0NyIsImlhdCI6MTQ5MDA2MzU5OSwiZXhwIjoxNDkwMTQ5OTk5fQ.22f5KzzvSUrINDFhlqAcUJLKhI4ciBLNuGrHLCglH4Q",
+                        type: 0,
+                        num: 11
+                    },
+                    function (data) {
+                        console.log(JSON.stringify(data));
+                        alert("数据：" + JSON.stringify(data));
+                    }, 'json');
+            });
+            //戒烟模式压制
+            $("#planCtrl").click(function () {
+                $.post("http://localhost:55566/api/v1/smoke/ctrl/", {
+                        key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1OGNmYTcwODNmOTYxYjJmMGM2MGM1ZDIiLCJ1c2VyUGhvbmUiOiIxODY2MTk2NTI0NyIsImlhdCI6MTQ5MDA2MzU5OSwiZXhwIjoxNDkwMTQ5OTk5fQ.22f5KzzvSUrINDFhlqAcUJLKhI4ciBLNuGrHLCglH4Q",
+                        type: 1,
+                        num: 11
+
+                    },
+                    function (data) {
+                        console.log(JSON.stringify(data));
+                        alert("数据：" + JSON.stringify(data));
+                    }, 'json');
+            });
+            //戒烟模式复吸或更改计划
+            $("#planCtrlStop").click(function () {
+                $.post("http://localhost:55566/api/v1/smoke/ctrl/", {
+                        key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1OGNmYTcwODNmOTYxYjJmMGM2MGM1ZDIiLCJ1c2VyUGhvbmUiOiIxODY2MTk2NTI0NyIsImlhdCI6MTQ5MDA2MzU5OSwiZXhwIjoxNDkwMTQ5OTk5fQ.22f5KzzvSUrINDFhlqAcUJLKhI4ciBLNuGrHLCglH4Q",
+                        type: 2,
+                    },
+                    function (data) {
+                        console.log(JSON.stringify(data));
+                        alert("数据：" + JSON.stringify(data));
+                    }, 'json');
+            });
+            //生成控烟计划
+            $("#createCtPlan").click(function () {
+                $.post("http://localhost:55566/api/v1/start/2/", {
+                        key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1OGNmYTcwODNmOTYxYjJmMGM2MGM1ZDIiLCJ1c2VyUGhvbmUiOiIxODY2MTk2NTI0NyIsImlhdCI6MTQ5MDA2MzU5OSwiZXhwIjoxNDkwMTQ5OTk5fQ.22f5KzzvSUrINDFhlqAcUJLKhI4ciBLNuGrHLCglH4Q",
+                        dayNum: 10,
+                        price: 11,
+                        tar: 50,
+                        adviceNum: 5
+                    },
+                    function (data) {
+                        console.log(JSON.stringify(data));
+                        alert("数据：" + JSON.stringify(data));
+                    }, 'json');
+            });
+            //控烟模式抽烟
+            $("#ctrlSmoke").click(function () {
+                $.post("http://localhost:55566/api/v1/smoke/ctrl/c1/", {
+                        key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1OGNmYTcwODNmOTYxYjJmMGM2MGM1ZDIiLCJ1c2VyUGhvbmUiOiIxODY2MTk2NTI0NyIsImlhdCI6MTQ5MDA2MzU5OSwiZXhwIjoxNDkwMTQ5OTk5fQ.22f5KzzvSUrINDFhlqAcUJLKhI4ciBLNuGrHLCglH4Q",
+                        type: 0,
+                        cNum: 5
+                    },
+                    function (data) {
+                        console.log(JSON.stringify(data));
+                        alert("数据：" + JSON.stringify(data));
+                    }, 'json');
+            });
+            //控烟模式压制
+            $("#ctrlCtrl").click(function () {
+                $.post("http://localhost:55566/api/v1/smoke/ctrl/c1/", {
+                        key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1OGNmYTcwODNmOTYxYjJmMGM2MGM1ZDIiLCJ1c2VyUGhvbmUiOiIxODY2MTk2NTI0NyIsImlhdCI6MTQ5MDA2MzU5OSwiZXhwIjoxNDkwMTQ5OTk5fQ.22f5KzzvSUrINDFhlqAcUJLKhI4ciBLNuGrHLCglH4Q",
+                        type: 1,
+                        num: 11,
+                    },
+                    function (data) {
+                        console.log(JSON.stringify(data));
+                        alert("数据：" + JSON.stringify(data));
+                    }, 'json');
+            });
+            //控烟模式更改计划
+            $("#ctrlStop").click(function () {
+                $.post("http://localhost:55566/api/v1/smoke/ctrl/c1/", {
+                        key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1OGNmYTcwODNmOTYxYjJmMGM2MGM1ZDIiLCJ1c2VyUGhvbmUiOiIxODY2MTk2NTI0NyIsImlhdCI6MTQ5MDA2MzU5OSwiZXhwIjoxNDkwMTQ5OTk5fQ.22f5KzzvSUrINDFhlqAcUJLKhI4ciBLNuGrHLCglH4Q",
+                        type: 2,
+                    },
+                    function (data) {
+                        console.log(JSON.stringify(data));
+                        alert("数据：" + JSON.stringify(data));
+                    }, 'json');
+            });
         });
     </script>
 </head>
 <body>
 <button id="getInfo">获取戒烟建议</button>
 <button id="createQsPlan">生成戒烟计划</button>
+<button id="planSmoke">戒烟模式抽烟</button>
+<button id="planCtrl">戒烟模式压制</button>
+<button id="planCtrlStop">戒烟模式复吸或更改计划</button>
+<button id="createCtPlan">生成控烟计划</button>
+<button id="ctrlSmoke">控烟模式抽烟</button>
+<button id="ctrlCtrl">控烟模式压制</button>
+<button id="ctrlStop">控烟模式更改计划</button>
 </body>
 </html>
