@@ -5,8 +5,6 @@ var express = require('express'),
     router = require('./router/router'),
     db = require('./db'),
     config = require('./config/config');
-// global.NODE_ENV = 'production';
-global.NODE_ENV = 'development';
 var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
@@ -15,11 +13,7 @@ app.all('*', function (req, res, next) {
     next();
 });
 app.use('/', router);
-if (NODE_ENV==='development'){
-    port = config.development.port;
-}else {
-    port = config.production.port;
-}
+port = config.port;
 app.set('port', port);
 app.listen(app.get('port'), function () {
     console.log('app start server at ' + app.get('port'));
