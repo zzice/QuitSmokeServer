@@ -54,7 +54,7 @@ module.exports.register = function (req, res) {
                     });
                     res.json({
                         success: true,
-                        error: false,
+                        error: null,
                         result: saveData,
                         token: sign
                     });
@@ -97,7 +97,7 @@ module.exports.login = function (req, res) {
                 // });
                 res.json({
                     success: true,
-                    error: false,
+                    error: null,
                     result: user,
                     token: sign
                 });
